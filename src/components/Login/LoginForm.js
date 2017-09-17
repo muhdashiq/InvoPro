@@ -1,23 +1,47 @@
 import React, { Component } from 'react'
 import {View, Text, StyleSheet, TouchableOpacity, TextInput} from 'react-native'
 import Canvas from "../common/Canvas";
-
+import firebase from 'firebase'
+import Spinner from '../common/Spinner'
 export default class LoginScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
             username: '',
             password: '',
+            error: '',
+            loading: false,
         }
     }
     loginButtonPressed() {
-        console.log('Button clicked');
+        const {username, password} = this.state;
+        this.setState({error:'', loading: true});
+        firebase.auth().signInWithEmailAndPassword(username, password)
+            .then(()=>{
+                console.log("Sucess");
+                this.setState({loading: false, username: '', password: '', error: ''});
+            })
+            .catch(() => {
+                console.log("Failed");
+                this.setState({error: 'Authentication failed! Retry again.', password: '',loading: false});
+            });
+
+    }
+
+    renderButton() {
+        return this.state.loading ? <Spinner/> : (
+            <TouchableOpacity onPress = {this.loginButtonPressed.bind(this)}>
+                <View style = { styles.ButtonContainer}>
+                    <Text style = {styles.ButtonText}>Login</Text>
+                </View>
+            </TouchableOpacity>
+        );
     }
     render() {
         return(
             <View style={styles.CanvasWrapper}>
                 <View style ={{flexDirection: 'row', padding: 30}}>
-                    <Text style = {styles.LogoText}>MarbleLand</Text>
+                    <Text style = {styles.LogoText}>LOGIN</Text>
                 </View>
                 <View style = {
                     {
@@ -35,9 +59,10 @@ export default class LoginScreen extends Component {
                         <View style = { styles.InputDataHolder}>
                             <TextInput
                                 style = {styles.InputDataStyle}
-                                onChangeText = {(text) => this.setState({username: text})}
+                                onChangeText = {(username) => this.setState({username})}
                                 value = {this.state.username}
-                                placeholder="Username"
+                                placeholder="user@gmail.com"
+                                autoCorrect={false}
                             >
                             </TextInput>
                         </View>
@@ -49,19 +74,20 @@ export default class LoginScreen extends Component {
                         <View style = { styles.InputDataHolder}>
                             <TextInput
                                 style = {styles.InputDataStyle}
-                                onChangeText = {(text) => this.setState({password: text})}
+                                onChangeText = {(password) => this.setState({password})}
                                 value = {this.state.password}
-                                placeholder="Password"
+                                placeholder="password"
+                                autoCorrect={false}
+                                secureTextEntry
                             >
                             </TextInput>
                         </View>
                     </View>
                     <View style = { styles.InputDataContainer}>
-                        <TouchableOpacity onPress = {this.loginButtonPressed}>
-                            <View style = { styles.ButtonContainer}>
-                                <Text style = {styles.ButtonText}>Login</Text>
-                            </View>
-                        </TouchableOpacity>
+                        <Text style={{fontSize:16, color:'red'}}>{this.state.error}</Text>
+                    </View>
+                    <View style = { styles.InputDataContainer}>
+                        {this.renderButton()}
                     </View>
                 </View>
             </View>
@@ -122,7 +148,7 @@ const styles = StyleSheet.create({
 
     },
     ButtonContainer: {
-        backgroundColor: 'black',
+        backgroundColor: 'grey',
         borderRadius: 5,
         flexDirection: 'row',
         alignItems: 'center',
@@ -130,7 +156,7 @@ const styles = StyleSheet.create({
         alignSelf: 'stretch',
         elevation: 2,
         position: 'relative',
-        marginTop: 30,
+       // marginTop: 30,
     },
     //#
 });
