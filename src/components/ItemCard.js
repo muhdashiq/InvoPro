@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
         padding: 5,
         //borderRadius: 5,
         marginTop: 5,
-        elevation:2,
-        position: 'relative',
+        elevation:1,
+       // position: 'relative',
     },
     IconContainerStyle: {
         flex:16,

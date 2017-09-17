@@ -1,11 +1,20 @@
 import React from 'react'
-import {View,StyleSheet, Text} from 'react-native'
-
+import {View,StyleSheet, Text, TouchableOpacity} from 'react-native'
+import firebase from 'firebase'
 const Header = (props) => {
-    let {HeaderContainerStyle, HeaderTextStyle} = styles;
+    let {HeaderContainerStyle, HeaderTextStyle,headerDataBlockStyle} = styles;
     return(
         <View style = {HeaderContainerStyle}>
-            <Text style = {HeaderTextStyle}>{props.headerText}</Text>
+            <View style={headerDataBlockStyle}/>
+            <View style={headerDataBlockStyle}>
+                <Text style = {HeaderTextStyle}>{props.headerText}</Text>
+            </View>
+            <TouchableOpacity
+                style={[headerDataBlockStyle,{alignItems: 'flex-end'}]}
+                 onPress={() => firebase.auth().signOut()}
+            >
+                <Text>Sign out</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -16,7 +25,7 @@ const styles = StyleSheet.create({
         //paddingTop: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        flexDirection: 'column',
+        flexDirection: 'row',
         //backgroundColor: '#f8f8f8',
         elevation: 2,
         position: 'relative',
@@ -26,6 +35,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'darkslategrey',
     },
+    headerDataBlockStyle: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingLeft: 10,
+        paddingRight: 10,
+    }
 });
 
 export default Header;
